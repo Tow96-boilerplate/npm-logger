@@ -1,0 +1,44 @@
+{
+  "name": "tow96-logger",
+  "version": "0.0.1",
+  "description": "Simple logger that uses winston that I utilize in most of my Typescript/javascript programs.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "test": "echo \"should run jest --config jestconfig.json\"",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tow96-boilerplate/npm-logger.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tow96-boilerplate/npm-logger/issues"
+  },
+  "homepage": "https://github.com/Tow96-boilerplate/npm-logger#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^27.0.4",
+    "prettier": "^2.3.0",
+    "ts-jest": "^27.0.2",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "winston": "^3.3.3"
+  }
+}
