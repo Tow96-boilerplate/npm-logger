@@ -16,6 +16,8 @@
 // };
 import winston from 'winston';
 
+const logs_folder = process.env.LOGGER_FOLDER || `${__dirname}/../../../logs`;
+
 const logger = winston.createLogger({
   transports: [
     // -Write all logs with level `error` and below to `error.log`
@@ -23,7 +25,7 @@ const logger = winston.createLogger({
       level: 'error',
       maxsize: 2 * 1024 * 1024, // 2MB
       maxFiles: 10,
-      filename: `${__dirname}/../logs/error.log`,
+      filename: `${logs_folder}/error.log`,
       format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.simple(),
@@ -35,7 +37,7 @@ const logger = winston.createLogger({
       level: 'info',
       maxsize: 2 * 1024 * 1024, // 2MB
       maxFiles: 10,
-      filename: `${__dirname}/../logs/combined.log`,
+      filename: `${logs_folder}/combined.log`,
       format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.simple(),
