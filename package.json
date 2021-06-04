@@ -1,6 +1,6 @@
 {
   "name": "tow96-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple logger that uses winston that I utilize in most of my Typescript/javascript programs.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
