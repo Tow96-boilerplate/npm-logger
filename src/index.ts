@@ -14,13 +14,28 @@
 //   debug: 5,
 //   silly: 6
 // };
-import winston from 'winston';
+import * as winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 const logsFolder = process.env.LOGGER_FOLDER || `${__dirname}/../../../logs`;
+const loggingDisabled = (process.env.DISABLE_LOGGING || 'false').toLowerCase() === 'true';
+const singleLogs = (process.env.SINGLE_LOGS || 'false').toLowerCase() === 'true';
 
 const logger = winston.createLogger({
   transports: [
-    // -Write all logs with level `error` and below to `error.log`
+    // Console Logging --------------------------------------------------------------------------------------------------
+    new winston.transports.Console({
+      silent: process.env.NODE_ENV === 'production',
+      level: 'silly',
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
+    }),
+  ],
+});
+
+// SINGLE LOGS --------------------------------------------------------------------------------------------------------
+if (!loggingDisabled && singleLogs) {
+  logger.add(
+    // Write all logs with level `error` and below to `error.log`
     new winston.transports.File({
       level: 'error',
       maxsize: 2 * 1024 * 1024, // 2MB
@@ -32,7 +47,10 @@ const logger = winston.createLogger({
         winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
       ),
     }),
-    // -Write all logs with level `info` and below to `combined.log`
+  );
+
+  // Write all logs with level `info` and below to `combined.log`
+  logger.add(
     new winston.transports.File({
       level: 'info',
       maxsize: 2 * 1024 * 1024, // 2MB
@@ -44,15 +62,42 @@ const logger = winston.createLogger({
         winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
       ),
     }),
-  ],
-});
+  );
+}
+// DAILY ROTATED LOGS ------------------------------------------------------------------------------------------------
 
-// If not in production then the logs will also be added to the `console`
-if (process.env.NODE_ENV !== 'production') {
+if (!loggingDisabled && !singleLogs) {
+  // Error logs
   logger.add(
-    new winston.transports.Console({
-      level: 'silly',
-      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
+    new DailyRotateFile({
+      silent: !loggingDisabled && !singleLogs,
+      level: 'error',
+      maxFiles: '30d',
+      filename: `${logsFolder}/Error/%DATE%.log`,
+      datePattern: 'YYYYMMDD',
+      format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.simple(),
+        winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
+      ),
+      zippedArchive: true,
+    }),
+  );
+
+  // Combined Logs
+  logger.add(
+    new DailyRotateFile({
+      silent: !loggingDisabled && !singleLogs,
+      level: 'info',
+      maxFiles: '30d',
+      filename: `${logsFolder}/Combined/%DATE%.log`,
+      datePattern: 'YYYYMMDD',
+      format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.simple(),
+        winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
+      ),
+      zippedArchive: true,
     }),
   );
 }
