@@ -52,7 +52,7 @@ if (!loggingDisabled && singleLogs) {
   // Write all logs with level `info` and below to `combined.log`
   logger.add(
     new winston.transports.File({
-      level: 'info',
+      level: 'http',
       maxsize: 2 * 1024 * 1024, // 2MB
       maxFiles: 10,
       filename: `${logsFolder}/combined.log`,
@@ -88,7 +88,7 @@ if (!loggingDisabled && !singleLogs) {
   logger.add(
     new DailyRotateFile({
       silent: !loggingDisabled && !singleLogs,
-      level: 'info',
+      level: 'http',
       maxFiles: '30d',
       filename: `${logsFolder}/Combined/%DATE%.log`,
       datePattern: 'YYYYMMDD',
