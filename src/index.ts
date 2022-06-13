@@ -70,7 +70,6 @@ if (!loggingDisabled && !singleLogs) {
   // Error logs
   logger.add(
     new DailyRotateFile({
-      silent: !loggingDisabled && !singleLogs,
       level: 'error',
       maxFiles: '30d',
       filename: `${logsFolder}/Error/%DATE%.log`,
@@ -87,7 +86,6 @@ if (!loggingDisabled && !singleLogs) {
   // Combined Logs
   logger.add(
     new DailyRotateFile({
-      silent: !loggingDisabled && !singleLogs,
       level: 'http',
       maxFiles: '30d',
       filename: `${logsFolder}/Combined/%DATE%.log`,
